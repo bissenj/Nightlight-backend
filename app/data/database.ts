@@ -166,15 +166,9 @@ export async function resetPassword( hash:string, password: string ): Promise<da
 // ---------------------------------------------------------------------------------------
 // SAVE LOCATION
 // ---------------------------------------------------------------------------------------
-//export async function saveLocation(email: string, latitude: number, longitude: number, timestamp: Date, accuracy: number = 0, source: string = ""): Promise<databaseMessage> {
-
 export async function saveLocation(location: location): Promise<databaseMessage> {
     let result:databaseMessage = {success: false, message: "Error while saving location", data: {}, error: 400}
-
-    //let {email, latitude: number, longitude: number, timestamp: Date, accuracy: number = 0, source: string = ""} = location;
-
-
-    //console.log("Save Location: ", email, latitude, longitude, timestamp, accuracy, source);
+    
     try {
 
         const user = await db.user.findFirst({
@@ -212,60 +206,19 @@ export async function saveLocation(location: location): Promise<databaseMessage>
 
 
 // ---------------------------------------------------------------------------------------
-// GET LOCATION
-// ---------------------------------------------------------------------------------------
-// export async function getLocation(userId: string): Promise<databaseMessage> {
-//     let result:databaseMessage = {success: false, message: "Error while saving location", data: {}, error: 400}
-
-//     console.log("Get Location: ", userId);
-//     try {
-
-//         const location = await db.coordinate.findMany({
-//             take: 10, 
-//             orderBy: {
-//                 timestamp: 'desc'
-//             }
-//         });
-
-//         console.log("Locations: ", location);
-               
-//         result.data = location;
-//         result.message = "";
-//         result.success = true;
-//         result.error = 200;        
-//     }
-//     catch(ex) {
-//         result.success = false;
-//         result.message = ex.message;
-//     }
-
-//     return result;
-// }
-
-
-
-// ---------------------------------------------------------------------------------------
 // GET USERS
 // ---------------------------------------------------------------------------------------
 export async function getUsers(email: string): Promise<databaseMessage> {
     let result:databaseMessage = {success: false, message: "Error while getting users", data: {}, error: 400}
-
-    //console.log("getUsers: ", email);
+    
     try {
 
-        // IMPROVE:
-        //  This date is dependent on the server date which is not the same
-        // as the client date.  Think about passing in a day to retrieve.
-
         let today = new Date();
-        today.setHours(today.getHours()-18);    // Hack for now.
-        //today.setHours(0,0,0,0);              // This rolls over at 6:00pm MST.  UGGH.
-        //console.log(today);
-
+        today.setHours(today.getHours());
+        
         const users = await db.user.findMany({
             where: {
-                NOT: [
-                    // {email: email},
+                NOT: [                    
                     {email: { startsWith: 'test' }},
                     {isDeleted: true }
                 ]                
@@ -274,9 +227,7 @@ export async function getUsers(email: string): Promise<databaseMessage> {
                 coordinates: {
                     where: {
                         timestamp: { gte: today },
-                    },
-                    // take: 20,
-                    // skip: 1,
+                    },                    
                     orderBy: {
                         timestamp: 'desc'
                     },
@@ -293,45 +244,13 @@ export async function getUsers(email: string): Promise<databaseMessage> {
 
                 return { coordinates: user.coordinates, email: user.email, name: user.name, settings, currentUser }
             });           
-
-            // filter out certain fields            
-            // const filteredResults = await Promise.all(
-            //         users.map( async(user) => {
-            //             const settings = (user.settings !== null) ? JSON.parse(user.settings.data) : {};
-            //             const currentUser = (user.email === email) ? true : false;
-
-            //             // TEST THIS
-            //             if (!user.coordinates || user.coordinates.length === 0) {
-            //                 const lastPosition = await getLastPosition(email);
-            //                 console.log("Last Position: ", lastPosition);
-            //             }
-
-            //             return { coordinates: user.coordinates, email: user.email, name: user.name, settings, currentUser }
-            //         }));
-
-                // Make sure each user has at least one coordinate.
-                // if (user.coordinates.length === 0) {
-                //     const currentPosition = await db.coordinate.findFirst({ 
-                //         orderBy: {
-                //             timestamp: 'desc'
-                //         },                           
-                //     });
-                //     if (currentPosition !== null) {
-                //         user.coordinates.push(currentPosition);
-                //     }
-                // }
-                
-            //});
-
-            console.log("Users & Positions: ", filteredResults);
-               
+   
             result.data = filteredResults;
             result.message = "";
             result.success = true;
             result.error = 200;        
         }
-        else {
-            console.log("No users and positions retrieved");
+        else {            
             throw ("No users and positions");
         }
     }
@@ -375,8 +294,7 @@ export async function getLastPosition(email: string): Promise<databaseMessage> {
             result.success = true;
             result.error = 200;        
         }
-        else {
-            console.log("No user position retrieved");
+        else {            
             throw ("No user positions");
         }
     }
@@ -413,12 +331,8 @@ export async function getUserSettings(email: string): Promise<databaseMessage> {
         // They may not have any yet, in which case, return a blank object.
         if (userAndSettings && userAndSettings.settings && userAndSettings.settings.data) {
             
-            // DON"T PRINT THIS SINCE PASSWORD WILL BE INCLUDED
-            //console.log("UserAndSettings: ", userAndSettings);
+            const settings = userAndSettings.settings; 
             
-            const settings = userAndSettings.settings; //{ userAndSettings.settings.data, email: email};
-
-            //console.log("getUserSettings: ", settings);
             result.data = settings.data;
             result.message = "";
             result.success = true;
@@ -477,9 +391,8 @@ export async function saveUserSettings(email: string, newSettings: string): Prom
             result.success = true;
             result.error = 200;
         }
-        else {
-            // UNSURE WHAT IT MEANS TO END UP HERE
-            console.log("saveUserSettings: NOW WHAT??? ", updateUserSettings);                         
+        else {            
+            throw ("Error getting user settings");
         }
 
     }
@@ -501,20 +414,17 @@ export async function saveUserSetting(email: string, newSetting: string): Promis
     try {        
         // // Get user settings if they exist.
         const userSettings = await getUserSettings(email);
-        if (userSettings && userSettings.success) {
-            //console.log("gotUserSetting: ", userSettings);
+        if (userSettings && userSettings.success) {            
 
             const parsedSettings = JSON.parse(userSettings.data);            
             console.log("Parsed Settings: ", parsedSettings);
 
             // convert user settings from request to object
-            const requestSettings = JSON.parse(newSetting);
-            //console.log("requestSettings: ", requestSettings);
+            const requestSettings = JSON.parse(newSetting);            
             
             // Merge the two objects
             const newUserSettings = Object.assign(parsedSettings, requestSettings);
-            console.log("newUserSettings: ", newUserSettings);            
-
+            
             const newUserSettingsString = JSON.stringify(newUserSettings);
             return await saveUserSettings(email, newUserSettingsString);
         }
@@ -526,71 +436,6 @@ export async function saveUserSetting(email: string, newSetting: string): Promis
     }
     return result;
 }
-
-
-
-// 2.0 - Web Tracking
-
-
-// ---------------------------------------------------------------------------------------
-// GET USER POSITIONS
-// ---------------------------------------------------------------------------------------
-// export async function getUserPositions(userId: string, startDate: Date, endDate: Date ): Promise<databaseMessage> {
-//     let result:databaseMessage = {success: false, message: "Error while getting User Positions", data: {}, error: 400}
-    
-//     try {
-        
-//         const userPosition = await db.user.findFirst({
-//             where: {
-//                 NOT: [
-//                     // {email: email},
-//                     {id: userId},
-//                     {isDeleted: true }
-//                 ]                
-//             },                         
-//             include: {
-//                 coordinates: {
-//                     where: {
-//                         timestamp: { gte: startDate, lte: endDate },
-//                     },
-//                     // take: 20,
-//                     // skip: 1,
-//                     orderBy: {
-//                         timestamp: 'desc'
-//                     },
-//                 },            
-//                 settings: {                    
-//                 },                
-//             },
-//         });
-
-//         if (userPosition) { 
-//             // parse the settings into an array
-//             const settings = (userPosition.settings !== null) ? JSON.parse(userPosition.settings.data) : {};
-            
-//             // create the user object to return
-//             const user = { coordinates: userPosition.coordinates, email: userPosition.email, settings }          
-                        
-//             console.log("User & Positions: ", user);
-               
-//             result.data = user;
-//             result.message = "";
-//             result.success = true;
-//             result.error = 200;        
-//         }
-//         else {
-//             console.log("No users and positions retrieved");
-//             throw ("No users and positions");
-//         }
-//     }
-//     catch(ex: any) {
-//         result.success = false;
-//         result.message = ex.message;
-//     }
-
-//     return result;
-// }
-
 
 // ---------------------------------------------------------------------------------------
 // GET USER POSITIONS
@@ -607,25 +452,6 @@ export async function getUserPositions(params: userPositionQueryParams): Promise
     
     let {startDateISO, endDateISO, limit, accuracy } = params;
 
-    // if (startDateISO === undefined) {
-    //     console.log("startDate is blank, setting default start date");
-    //     startDateISO = new Date();        
-    // }    
-
-    // if (endDateISO === undefined) {
-    //     console.log("endDate is blank, setting default end date");
-    //     endDateISO = new Date();
-    // }    
-
-    // if (limit === undefined) {
-    //     limit = 1;
-    // }
-
-    // if (accuracy === undefined) {
-    //     accuracy = 10000;
-    // }
-    
-
     try {
         
         const users = await db.user.findMany({
@@ -641,8 +467,7 @@ export async function getUserPositions(params: userPositionQueryParams): Promise
                         timestamp: { gte: startDateISO, lte: endDateISO },
                         accuracy: { lte: accuracy}
                     },               
-                    take: limit,
-                    // skip: skip,                    
+                    take: limit,                    
                     orderBy: {
                         timestamp: 'desc'
                     },
