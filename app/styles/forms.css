@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Henny+Penny&family=Oswald&family=Roboto+Condensed&display=swap');
+
+* {        
+    font-family: 'Roboto Condensed', sans-serif;    
+}
+
+html {
+    box-sizing: border-box;
+    width: 100vw;    
+}
+
+body { 
+    margin: 0;    
+    background:  url('/img/mountains.jpg') no-repeat center center fixed;   
+    background-size: cover; 
+}
+
+#app {
+    height: 100vh;    
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;    
+    background: linear-gradient(-45deg, rgba(238,119,82, 0.3), rgba(231,60,126, 0.7), rgba(35,166,213, 0.4), #23d5ab); 
+    background-size: 400% 400%; 
+
+    animation: gradient 32s ease infinite;  
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.login-container { 
+    background-color: white;
+    box-shadow: 1px 1px 3px 1px #444;
+    padding: 20px 60px;
+    border-radius: 3px;
+    width: 220px;
+}
+
+.login-container fieldset {
+    border: none; 
+    margin: 0; 
+    padding: 0px;    
+}
+
+.login-container .heading { 
+    text-align: center; font-size: 1.5em; margin-bottom:25px; text-transform: uppercase; 
+    color: #444; font-family: 'Oswald', sans-serif; letter-spacing: 0.5em; }
+
+.field-container { 
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+.field-container label { display: block; color: #333;}
+.field-container input { width: 200px; padding: 8px; font-size: 1.2em;}
+button { margin-top: 25px; font-size: 1.2em; 
+    background-color: #4d70c2;
+    border: none;
+    padding: 20px 40px;
+    width: 100%;
+    border-radius: 3px;
+    color: white;
+}
+
+.form-validation-error {
+    background-color: rgb(248, 144, 144);
+    color: white;
+    padding: 10px;
+    width: 200px;
+    margin-top: 25px;
+    font-size: 1.2em;    
+}
+

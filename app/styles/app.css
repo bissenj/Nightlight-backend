@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter&family=Montserrat:wght@700&display=swap');
+
+:root {    
+    --link-color: rgb(213, 190, 247);  
+}
+
+* {        
+    font-family: 'Roboto Condensed', sans-serif;    
+}
+
+
+html {
+    box-sizing: border-box;    
+    font-size: 16px;
+
+    background-color: black;
+}
+
+body {
+    margin: 0;   
+    font-size: 1.4rem; 
+    background-color: white;
+
+    animation: fade-in 0.5s ease-in-out;
+    animation-fill-mode: forwards;
+    transition: opacity 0.75s;
+}
+
+@keyframes fade-in {
+    0% { opacity: 0; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+
+fieldset {
+    border-color: white;
+    border-width: 1px;    
+}
+
+fieldset legend {
+    text-transform: uppercase;
+    font-size: 1.2em;    
+}
+
+a {
+    all: unset;
+}
+
+a.link-secondary {
+    border-bottom: 2px dotted var(--link-color);    
+    margin-left: 0.5rem;
+    cursor: pointer;
+}
+
+.app {
+    height: 100vh;   
+    display: flex;
+    flex-direction: column;     
+}
+
+.input-control {    
+    padding: 20px;
+}
+
+.input-control label {
+    margin-right: 20px;
+}
+
+.input-control input {
+    padding: 10px;
+}
+
+.input-control button {
+    padding: 5px 20px;
+    font-size: 1.2em;    
+}
+
+.header {     
+    background:  url('/img/mountains.jpg') no-repeat;   
+    background-size: cover;         
+    background-position: 50% 50%;
+    /* background-attachment: fixed;     */
+    height: 30vh;
+    min-height: 300px;
+
+    display: grid;
+    place-content: center;
+
+    flex-grow: 0;
+}
+
+.header .text {
+    color: white;
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.content {
+    padding: 40px 10%;
+    flex-grow: 1;
+}
+
+ul.links-list a {       
+    position: relative;
+    padding: 2px;
+    cursor: pointer;
+    transition: all 0.2s;   
+    border-bottom: 3px dotted var(--link-color);
+}
+ul.links-list a::before {
+    background-color: var(--link-color);    
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    content: '';
+    width: 0;
+    height: 100%;
+    transition: width 0.1s;
+}
+ul.links-list a:hover::before {    
+    width: 100%;    
+}
+ul.links-list li {
+    margin: 10px 0px;
+}
+
+.strava-card {    
+    color: rgb(71, 71, 71);
+}
+
+.strava-card span { 
+    float: right; 
+    font-size: 1.4em;   
+    color: black; 
+}
+
+/*  
+    FONT-SIZES
+*/
+.fs-12 { font-size: 1.2rem;}
+.fs-14 { font-size: 1.4rem;}
+.fs-16 { font-size: 1.6rem;}
+.fs-18 { font-size: 1.8rem;}
+
+/*
+    MARGIN
+*/
+.mb-4 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+
+/* 
+    FONT
+*/
+.fm-primary { 
+    font-family: 'Roboto Condensed', sans-serif;    
+}
+.fm-secondary { 
+    font-family: 'Inter', sans-serif;    
+}
+
+/*
+    FOOTER
+*/
+footer { 
+    color: white;
+    background-color: #1a1a1a; 
+    display: grid; 
+    place-content: 
+    center; height:200px;     
+    border-top: 8px solid;
+    border-image-slice: 1;    
+    border-image-source: var(--accent-1);
+    min-height: 200px;
+
+    flex-grow: 0;
+}
+footer .mountains { 
+    font-family: 'Montserrat', sans-serif;     
+    text-transform: uppercase; 
+    font-size: 1.5em;    
+    letter-spacing: 6px;    
+}
+footer .andcode {     
+    opacity: 0.5; 
+    text-transform: uppercase; 
+    text-align: center; 
+    font-size: 0.6em; 
+    letter-spacing: 6px;     
+}
+footer a {
+    position: relative;
+    padding: 20px;
+    cursor: pointer;
+    border: 1px solid rgb(56, 56, 56);
+    transition: background-color 0.3s;
+}
+footer a:hover {
+    border: 1px solid rgb(200,200,200);
+    background-color: rgba(88, 88, 88, 0.2);
+}
+
+
+/* ---------------------------------- MEDIA QUERIES ---------------------------- */
+
+@media only screen and (max-width: 600px) {
+    body {
+        font-size: 1.2rem;
+    }
+
+    .strava-card span { 
+        font-size: 1.3rem;
+    }
+}
